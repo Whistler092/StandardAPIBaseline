@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Movies.API.Mapping;
-using Movies.Application.Models;
 using Movies.Application.Repositories;
 using Movies.Contracts.Request;
-using Movies.Contracts.Responses;
 
-namespace Movies.API.Controller;
+namespace Movies.API.Controllers;
 
 [ApiController] 
 public class MoviesController : ControllerBase
@@ -58,7 +56,7 @@ public class MoviesController : ControllerBase
         return Ok(response);
     }
     
-    [HttpPut(ApiEndpoints.Movies.Delete)]
+    [HttpDelete(ApiEndpoints.Movies.Delete)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         var updated = await _movieRepository.DeleteByIdAsync(id);
