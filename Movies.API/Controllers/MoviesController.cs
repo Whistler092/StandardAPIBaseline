@@ -22,6 +22,8 @@ public class MoviesController : ControllerBase
     {
         var movie = request.MapToMovie();
         await _movieRepository.CreateAsync(movie);
+        
+        return CreatedAtAction(nameof(GetById), new { id = movie.Id }, movie.MapToToResponse());
         return Created($"/{ApiEndpoints.Movies.Create}/{movie.Id}", movie.MapToToResponse());
     }
 
