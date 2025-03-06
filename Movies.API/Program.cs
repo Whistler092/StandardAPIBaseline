@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 
 //Don't register the services here. Because we need to encapsulate the logic of the layer
 //Create extensions Methods insterad. 
@@ -18,7 +18,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
 app.MapControllers();
+
+app.Run();
+ 

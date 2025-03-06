@@ -1,6 +1,21 @@
-@Movies.API_HostAddress = http://localhost:5001
 
-GET {{Movies.API_HostAddress}}/weatherforecast/
+## Get All
+GET {{url}}/api/movies
 Accept: application/json
 
-###
+### Save 
+POST {{url}}/api/movies
+Content-Type: application/json
+
+{
+  "Title": "Fight Club",
+  "YearOfRelease": "1999",
+  "Genres" : [
+    "Action", 
+    "Crime"
+  ]
+}
+
+### Get All
+GET {{url}}/api/movies
+Accept: application/json
