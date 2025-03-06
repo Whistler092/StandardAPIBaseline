@@ -1,4 +1,6 @@
+using System.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Movies.Application.Database;
 using Movies.Application.Repositories;
 
 namespace Movies.Application;
@@ -9,6 +11,18 @@ public static class ApplicationServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddSingleton<IMovieRepository, MovieRepository>();
+        return services;
+    }
+
+    public static IServiceCollection AddDatabase(this IServiceCollection services, 
+        string connectionString)
+    {
+        //It's singleton because NpgsqlConnectionFactory doesn't need to be anything else
+        //Because the factory will return a new connection every time with CreateConnectionAsync()
+        //It's effectively a singleton masking a trasient 
+        services.AddSingleton<IDbConnectionFactory>(_ => 
+            new NpgsqlConnectionFactory(connectionString));
+        services.AddSingleton<DbInitializer>();
         return services;
     }
     
