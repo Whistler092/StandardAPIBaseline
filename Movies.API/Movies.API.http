@@ -19,3 +19,4 @@ Content-Type: application/json
 ### Get All
 GET {{url}}/api/movies
 Accept: application/json
+
