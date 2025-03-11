@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Movies.API;
 using Movies.API.Mapping;
 using Movies.Application;
 using Movies.Application.Database;
@@ -20,7 +21,7 @@ builder.Services.AddAuthentication(x =>
         //
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(config["Jwt:TokenKey"]!)
-            ),
+        ),
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
         ValidIssuer = config["Jwt:Issuer"],
@@ -30,7 +31,18 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(x =>
+{
+    x.AddPolicy(AuthConstants.AdminUserPolicyName,
+        p =>
+            p.RequireClaim(AuthConstants.AdminUserClaimName, "true"));
+
+    x.AddPolicy(AuthConstants.TruestedMemberPolicyName,
+        p => p.RequireAssertion(c =>
+            c.User.HasClaim(m => m is { Type : AuthConstants.AdminUserClaimName, Value: "true" }) ||
+            c.User.HasClaim(m => m is { Type : AuthConstants.TruestedMemberClaimName, Value: "true" })
+        ));
+});
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -64,4 +76,3 @@ var dbInitializer = app.Services.GetRequiredService<DbInitializer>();
 await dbInitializer.InitializeAsync();
 
 app.Run();
- 
