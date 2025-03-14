@@ -41,12 +41,22 @@ public class MovieRepository : IMovieRepository
         return result > 0;
     }
 
-    public async Task<Movie?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Movie?> GetByIdAsync(Guid movieId, Guid? userId, CancellationToken cancellationToken = default)
     {
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
-            new CommandDefinition("""select * from Movies where id = @id""",
-                new { MovieId = id }, cancellationToken: cancellationToken));
+            new CommandDefinition("""
+                                    select m.* , 
+                                           round(avg(r.rating), 1) as rating,
+                                           myr.rating as userrating
+                                    from Movies m
+                                    left join ratings r on m.id = r.movieid
+                                    left join ratings myr on m.id = myr.movieid 
+                                                                 and myr.userid = @userid 
+                                    where m.id = @id
+                                    group by id, myr.rating
+                                    """,
+                new { movieId = movieId,  }, cancellationToken: cancellationToken));
 
         if (movie is null)
         {
@@ -56,7 +66,7 @@ public class MovieRepository : IMovieRepository
         var genres = await connection.QueryAsync<string>(
             new CommandDefinition("""
                                   select name from genres where movieId = @id
-                                  """, new { id }, cancellationToken: cancellationToken));
+                                  """, new { id = movieId }, cancellationToken: cancellationToken));
         foreach (var genre in genres)
         {
             movie.Genres.Add(genre);
@@ -65,12 +75,22 @@ public class MovieRepository : IMovieRepository
         return movie;
     }
 
-    public async Task<Movie?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
+    public async Task<Movie?> GetBySlugAsync(string slug, Guid? userId, CancellationToken cancellationToken = default)
     {
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
-            new CommandDefinition("""select * from Movies where slug = @slug""",
-                new { slug }, cancellationToken: cancellationToken));
+            new CommandDefinition("""
+                    select m.* , 
+                           round(avg(r.rating), 1) as rating,
+                           myr.rating as userrating
+                    from Movies m
+                    left join ratings r on m.id = r.movieid
+                    left join ratings myr on m.id = myr.movieid 
+                                                 and myr.userid = @userid 
+                    where m.slug = @slug
+                    group by id, myr.rating
+                    """,
+                new { slug, userId }, cancellationToken: cancellationToken));
 
         if (movie is null)
         {
@@ -89,21 +109,29 @@ public class MovieRepository : IMovieRepository
         return movie;
     }
 
-    public async Task<IEnumerable<Movie>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Movie>> GetAllAsync(Guid? userId, CancellationToken cancellationToken = default)
     {
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         var result = await connection.QueryAsync(
             new CommandDefinition("""
-                                  select m.*, string_agg(g.name, ',') as genres 
+                                  select m.*,
+                                         string_agg(g.name, ',') as genres,
+                                         round(avg(r.rating), 1) as rating,
+                                         myr.rating as userrating
                                   from Movies m
                                   left join genres g on m.id = g.movieId
-                                  group by id
-                                  """, cancellationToken: cancellationToken));
+                                  left join ratings r on m.id = r.movieid
+                                  left join ratings myr on m.id = myr.movieid 
+                                                               and myr.userid = @userid 
+                                  group by id, myr.rating
+                                  """, new { userId }, cancellationToken: cancellationToken));
 
         return result.Select(x => new Movie
         {
             Id = x.id,
             Title = x.title,
+            Rating = (float?)x.rating,
+            UserRating = (int?)x.userrating,
             YearOfRelease = x.yearofrelease,
             Genres = Enumerable.ToList(x.genres.Split(',')),
         });
@@ -113,10 +141,6 @@ public class MovieRepository : IMovieRepository
     {
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         using var transaction = connection.BeginTransaction();
-
-        var exist = await ExistByIdAsync(movie.Id, cancellationToken);
-        if (!exist)
-            throw new KeyNotFoundException();
 
         await connection.ExecuteAsync(new CommandDefinition(
             """
@@ -159,7 +183,7 @@ public class MovieRepository : IMovieRepository
         return result > 0;
     }
 
-    public async Task<bool> ExistByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistByIdAsync(Guid id, Guid? userId, CancellationToken cancellationToken = default)
     {
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         return await connection.ExecuteScalarAsync<bool>(new CommandDefinition("""

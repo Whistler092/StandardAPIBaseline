@@ -9,6 +9,10 @@ public partial class Movie
 
     public string Slug => GenerateSlug();
 
+    public float? Rating { get; set; }
+
+    public int? UserRating { get; set; }
+
     public required int YearOfRelease { get; init; }
     public required List<string> Genres { get; init; } = new(); //Enumerable.Empty<string>();
 
