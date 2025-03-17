@@ -16,7 +16,8 @@ public static class ContractMapping
             Genres = request.Genres.ToList()
         };
     }
-    
+
+
     public static MovieResponse MapToToResponse(this Movie movie)
     {
         return new MovieResponse
@@ -49,6 +50,16 @@ public static class ContractMapping
             Genres = request.Genres.ToList()
         };
     }
-    
+     
+    public static IEnumerable<MovieRatingResponse> MapToResponse(this IEnumerable<MovieRating> ratings)
+    {
+        return ratings.Select(x => new MovieRatingResponse
+        {
+            Rating = x.Rating,
+            Slug = x.Slug,
+            MovieId = x.MovieId
+        });
+    }
+
     
 }
