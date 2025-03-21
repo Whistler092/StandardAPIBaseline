@@ -56,7 +56,7 @@ public class MovieRepository : IMovieRepository
                                   where m.id = @id
                                   group by id, myr.rating
                                   """,
-                new { movieId = movieId, }, cancellationToken: cancellationToken));
+                new { id = movieId, userId }, cancellationToken: cancellationToken));
 
         if (movie is null)
         {
