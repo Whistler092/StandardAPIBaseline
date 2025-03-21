@@ -46,17 +46,17 @@ public class MovieRepository : IMovieRepository
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
             new CommandDefinition("""
-                                    select m.* , 
-                                           round(avg(r.rating), 1) as rating,
-                                           myr.rating as userrating
-                                    from Movies m
-                                    left join ratings r on m.id = r.movieid
-                                    left join ratings myr on m.id = myr.movieid 
-                                                                 and myr.userid = @userid 
-                                    where m.id = @id
-                                    group by id, myr.rating
-                                    """,
-                new { movieId = movieId,  }, cancellationToken: cancellationToken));
+                                  select m.* , 
+                                         round(avg(r.rating), 1) as rating,
+                                         myr.rating as userrating
+                                  from Movies m
+                                  left join ratings r on m.id = r.movieid
+                                  left join ratings myr on m.id = myr.movieid 
+                                                               and myr.userid = @userid 
+                                  where m.id = @id
+                                  group by id, myr.rating
+                                  """,
+                new { movieId = movieId, }, cancellationToken: cancellationToken));
 
         if (movie is null)
         {
@@ -80,16 +80,16 @@ public class MovieRepository : IMovieRepository
         using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
             new CommandDefinition("""
-                    select m.* , 
-                           round(avg(r.rating), 1) as rating,
-                           myr.rating as userrating
-                    from Movies m
-                    left join ratings r on m.id = r.movieid
-                    left join ratings myr on m.id = myr.movieid 
-                                                 and myr.userid = @userid 
-                    where m.slug = @slug
-                    group by id, myr.rating
-                    """,
+                                  select m.* , 
+                                         round(avg(r.rating), 1) as rating,
+                                         myr.rating as userrating
+                                  from Movies m
+                                  left join ratings r on m.id = r.movieid
+                                  left join ratings myr on m.id = myr.movieid 
+                                                               and myr.userid = @userid 
+                                  where m.slug = @slug
+                                  group by id, myr.rating
+                                  """,
                 new { slug, userId }, cancellationToken: cancellationToken));
 
         if (movie is null)
@@ -122,26 +122,30 @@ public class MovieRepository : IMovieRepository
                            order by m.{options.SortField} {(options.SortOrder == SortOrder.Ascending ? "asc" : "desc")}
                            """;
         }
-        
+
         var result = await connection.QueryAsync(
             new CommandDefinition($"""
-                                  select m.*,
-                                         string_agg(g.name, ',') as genres,
-                                         round(avg(r.rating), 1) as rating,
-                                         myr.rating as userrating
-                                  from Movies m
-                                  left join genres g on m.id = g.movieId
-                                  left join ratings r on m.id = r.movieid
-                                  left join ratings myr on m.id = myr.movieid 
-                                                               and myr.userid = @userid 
-                                  WHERE (@title is null or m.title like ('%' || @title || '%'))
-                                  AND (@yearofrelease is null or m.yearofrelease = @yearofrelease)
-                                  group by id, myr.rating {orderClause}
-                                  """, new
+                                   select m.*,
+                                          string_agg(g.name, ',') as genres,
+                                          round(avg(r.rating), 1) as rating,
+                                          myr.rating as userrating
+                                   from Movies m
+                                   left join genres g on m.id = g.movieId
+                                   left join ratings r on m.id = r.movieid
+                                   left join ratings myr on m.id = myr.movieid 
+                                                                and myr.userid = @userid 
+                                   WHERE (@title is null or m.title like ('%' || @title || '%'))
+                                   AND (@yearofrelease is null or m.yearofrelease = @yearofrelease)
+                                   group by id, myr.rating {orderClause}
+                                   limit @pageSize
+                                   offset @pageOffset
+                                   """, new
             {
-                userId = options.UserId ,
+                userId = options.UserId,
                 title = options.Title,
                 yearofrelease = options.YearOfRelease,
+                pageSize = options.PageSize,
+                pageOffset = (options.Page - 1) * options.PageSize,
             }, cancellationToken: cancellationToken));
 
         return result.Select(x => new Movie
@@ -209,5 +213,22 @@ public class MovieRepository : IMovieRepository
                                                                                from Movies where id = @id
                                                                                """, new { id },
             cancellationToken: cancellationToken));
+    }
+
+    public async Task<int> GetCountAsync(string? title, int? yearOfRelease,
+        CancellationToken cancellationToken = default)
+    {
+        using var connection = await _dbConnection.CreateConnectionAsync(cancellationToken);
+        return await connection.QuerySingleAsync<int>(
+            new CommandDefinition("""
+                                  SELECT count(id)
+                                  FROM movies m
+                                  WHERE (@title is null or m.title like ('%' || @title || '%'))
+                                  AND (@yearofrelease is null or m.yearofrelease = @yearofrelease)
+                                  """, new
+            {
+                title,
+                yearOfRelease
+            }, cancellationToken: cancellationToken));
     }
 }
