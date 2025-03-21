@@ -1,3 +1,4 @@
+using System.Xml.XPath;
 using Movies.Application.Models;
 using Movies.Contracts.Request;
 using Movies.Contracts.Responses;
@@ -66,7 +67,10 @@ public static class ContractMapping
         return new GetAllMoviesOptions
         {
             Title = request.Title,
-            YearOfRelease = request.Year
+            YearOfRelease = request.Year,
+            SortField = request.SortBy?.Trim('+', '-'),
+            SortOrder = request.SortBy is null ? SortOrder.Unsorted :
+                (request.SortBy.StartsWith('-') ? SortOrder.Descending : SortOrder.Ascending),
         };
     }
 
