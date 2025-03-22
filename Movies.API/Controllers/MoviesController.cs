@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Movies.API.Mapping;
@@ -25,12 +26,13 @@ public class MoviesController : ControllerBase
         var movie = request.MapToMovie();
         await _movieService.CreateAsync(movie, cancellationToken);
 
-        return CreatedAtAction(nameof(GetById), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
+        return CreatedAtAction(nameof(GetByIdV1), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
         //return Created($"/{ApiEndpoints.Movies.Create}/{movie.Id}", movie.MapToToResponse());
     }
 
+    [ApiVersion(1.0, Deprecated = true)]
     [HttpGet(ApiEndpoints.Movies.Get)]
-    public async Task<IActionResult> GetById([FromRoute] string idOrSlug,
+    public async Task<IActionResult> GetByIdV1([FromRoute] string idOrSlug,
         [FromServices] LinkGenerator linkGenerator,
         CancellationToken cancellationToken)
     {
@@ -51,7 +53,50 @@ public class MoviesController : ControllerBase
         };
         response.Links.Add(new Link
         {
-            Href = linkGenerator.GetPathByAction(HttpContext, nameof(GetById), values: new { idOrSlug = movie.Slug }),
+            Href = linkGenerator.GetPathByAction(HttpContext, nameof(GetByIdV1), values: new { idOrSlug = movie.Slug }),
+            Rel = "self",
+            Type = "GET"
+        });
+        response.Links.Add(new Link
+        {
+            Href = linkGenerator.GetPathByAction(HttpContext, nameof(Update), values: movieObj),
+            Rel = "self",
+            Type = "PUT"
+        });
+        response.Links.Add(new Link
+        {
+            Href = linkGenerator.GetPathByAction(HttpContext, nameof(Delete), values: movieObj),
+            Rel = "self",
+            Type = "DELETE"
+        });
+
+        return Ok(response);
+    }
+    
+    [ApiVersion(2.0)]
+    [HttpGet(ApiEndpoints.Movies.Get)]
+    public async Task<IActionResult> GetByIdV2([FromRoute] string idOrSlug,
+        [FromServices] LinkGenerator linkGenerator,
+        CancellationToken cancellationToken)
+    {
+        var userId = HttpContext.GetUserId();
+
+        var movie = Guid.TryParse(idOrSlug, out var id)
+            ? await _movieService.GetByIdAsync(id, userId, cancellationToken)
+            : await _movieService.GetBySlugAsync(idOrSlug, userId, cancellationToken);
+        if (movie is null)
+        {
+            return NotFound();
+        }
+
+        var response = movie.MapToToResponse();
+        var movieObj = new
+        {
+            id = movie.Id,
+        };
+        response.Links.Add(new Link
+        {
+            Href = linkGenerator.GetPathByAction(HttpContext, nameof(GetByIdV2), values: new { idOrSlug = movie.Slug }),
             Rel = "self",
             Type = "GET"
         });
