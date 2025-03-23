@@ -1,11 +1,14 @@
 using System.Text;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Movies.API;
 using Movies.API.Mapping;
+using Movies.API.Swagger;
 using Movies.Application;
 using Movies.Application.Database;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -56,12 +59,11 @@ builder.Services.AddApiVersioning(x =>
     //returns at headers the API supported versions
     x.ReportApiVersions = true;
     x.ApiVersionReader = new MediaTypeApiVersionReader("api-version");
-}).AddMvc();
+}).AddMvc().AddApiExplorer();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+builder.Services.AddSwaggerGen(x => x.OperationFilter<SwaggerDefaultValues>());
 
 //Don't register the services here. Because we need to encapsulate the logic of the layer
 //Create extensions Methods insterad. 
@@ -75,7 +77,14 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(x =>
+    {
+        foreach (var description in app.DescribeApiVersions())
+        {
+            x.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
+            
+        }
+    });
 }
 
 app.UseHttpsRedirection();
