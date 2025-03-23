@@ -62,6 +62,9 @@ builder.Services.AddApiVersioning(x =>
 }).AddMvc().AddApiExplorer();
 
 builder.Services.AddControllers();
+
+builder.Services.AddHealthChecks();
+
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen(x => x.OperationFilter<SwaggerDefaultValues>());
 
@@ -86,6 +89,9 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+
+//https://localhost:7001/_health => 200 
+app.MapHealthChecks("_health");
 
 app.UseHttpsRedirection();
 
