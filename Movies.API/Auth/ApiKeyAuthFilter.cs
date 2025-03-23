@@ -28,8 +28,6 @@ public class ApiKeyAuthFilter : IAuthorizationFilter
             context.Result = new UnauthorizedObjectResult("Invalid API Key");
             return;
         }
-
-            
     }
 
 }

@@ -23,8 +23,8 @@ public class MoviesController : ControllerBase
         _outputCacheStore = outputCacheStore;
     }
 
-    //[Authorize(AuthConstants.TruestedMemberPolicyName)]
-    [ServiceFilter(typeof(ApiKeyAuthFilter))]
+    [Authorize(AuthConstants.TruestedMemberPolicyName)]
+    //[ServiceFilter(typeof(ApiKeyAuthFilter))] Only for token based auth
     [HttpPost(ApiEndpoints.Movies.Create)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
