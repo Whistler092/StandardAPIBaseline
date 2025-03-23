@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Movies.API.Auth;
 using Movies.API.Mapping;
 using Movies.Application.Services;
 using Movies.Contracts.Request;
@@ -22,7 +23,8 @@ public class MoviesController : ControllerBase
         _outputCacheStore = outputCacheStore;
     }
 
-    [Authorize(AuthConstants.TruestedMemberPolicyName)]
+    //[Authorize(AuthConstants.TruestedMemberPolicyName)]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     [HttpPost(ApiEndpoints.Movies.Create)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]

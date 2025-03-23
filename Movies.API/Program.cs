@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Movies.API;
+using Movies.API.Auth;
 using Movies.API.Health;
 using Movies.API.Mapping;
 using Movies.API.Swagger;
@@ -50,6 +51,7 @@ builder.Services.AddAuthorization(x =>
 });
 
 // Add services to the container.
+builder.Services.AddScoped<ApiKeyAuthFilter>();
 
 builder.Services.AddApiVersioning(x =>
 {
