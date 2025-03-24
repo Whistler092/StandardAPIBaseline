@@ -1,12 +1,21 @@
 ﻿
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Movies.Api.Sdk;
 using Movies.Contracts.Request;
 using Refit;
 
-var moviesApi = RestService.For<IMoviesApi>("https://localhost:7001");
+//var moviesApi = RestService.For<IMoviesApi>("https://localhost:7001");
 
-var movie = await moviesApi.GetMovieAsync("fast--furious-2009");
+var services = new ServiceCollection();
+
+services.AddRefitClient<IMoviesApi>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7001"));
+var provider = services.BuildServiceProvider();
+
+var moviesApi = provider.GetRequiredService<IMoviesApi>();
+
+//var movie = await moviesApi.GetMovieAsync("fast--furious-2009");
 
 //Console.WriteLine(JsonSerializer.Serialize(movie, new JsonSerializerOptions { WriteIndented = true }));
 
