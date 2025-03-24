@@ -123,7 +123,7 @@ public class MoviesController : ControllerBase
         return Ok(response);
     } */
 
-    [Authorize(AuthConstants.AdminUserPolicyName)]
+   /*  [Authorize(AuthConstants.AdminUserPolicyName)]
     [HttpDelete(ApiEndpoints.Movies.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -135,5 +135,5 @@ public class MoviesController : ControllerBase
         
         await _outputCacheStore.EvictByTagAsync("movies", cancellationToken);
         return Ok();
-    }
+    } */
 }

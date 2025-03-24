@@ -17,7 +17,7 @@ public class RatingsController : ControllerBase
         _ratingService = ratingService;
     }
 
-    [Authorize]
+   /*  [Authorize]
     [HttpPut(ApiEndpoints.Movies.Rate)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -28,9 +28,9 @@ public class RatingsController : ControllerBase
         var userId = HttpContext.GetUserId();
         var result = await _ratingService.RateMovieAsync(id, movieRequest.Rating, userId.Value, cancellationToken);
         return result ? Ok() : NotFound();
-    }
+    } */
 
-    [Authorize]
+/*     [Authorize]
     [HttpDelete(ApiEndpoints.Movies.DeleteRatings)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,9 +40,9 @@ public class RatingsController : ControllerBase
         var userId = HttpContext.GetUserId();
         var result = await _ratingService.DeleteRatingAsync(id, userId!.Value, cancellationToken);
         return result ? Ok() : NotFound();
-    }
+    } */
 
-    [Authorize]
+   /*  [Authorize]
     [HttpGet(ApiEndpoints.Ratings.GetUserRatings)]
     [ProducesResponseType(typeof(IEnumerable<MovieRatingResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserRatings(
@@ -55,5 +55,5 @@ public class RatingsController : ControllerBase
         return Ok(ratingsResponse);
 
 
-    }
+    } */
 }
