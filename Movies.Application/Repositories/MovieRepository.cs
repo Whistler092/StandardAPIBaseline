@@ -181,6 +181,7 @@ public class MovieRepository : IMovieRepository
         var result = await connection.ExecuteAsync(new CommandDefinition(
             """
             UPDATE movies set slug = @slug, title = @title, yearOfRelease = @yearOfRelease
+            WHERE id = @id
             """, movie, cancellationToken: cancellationToken));
         transaction.Commit();
         return result > 0;

@@ -51,12 +51,7 @@ public class MovieService : IMovieService
         CancellationToken cancellationToken = default)
     {
         await _movieValidator.ValidateAndThrowAsync(movie, cancellationToken);
-        var movieExist = await _movieRepository.ExistByIdAsync(movie.Id, userId, cancellationToken);
-        if (!movieExist)
-        {
-            return null;
-        }
-
+   
         var exist = await _movieRepository.ExistByIdAsync(movie.Id, userId, cancellationToken);
         if (!exist)
             throw new KeyNotFoundException();
