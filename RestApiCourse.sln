@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.GettingStarted", "1.GettingStarted", "{DAFD6700-34DB-4E19-8ECA-FB3B2D5EA0E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{812E3414-A5B0-4900-98BF-F792433061FE}"
@@ -17,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Api", "Helpers\Identity.Api\Identity.Api.csproj", "{F61279A3-FE9D-448B-BA6F-74508C102820}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Api.Sdk", "1.GettingStarted\Movies.Api.Sdk\Movies.Api.Sdk.csproj", "{007256BA-7389-45E8-AFAD-59F09C48F8B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Api.Sdk.Consumer", "1.GettingStarted\Movies.Api.Sdk.Consumer\Movies.Api.Sdk.Consumer.csproj", "{BB6F83BB-0116-49F7-A800-7CF01AC4E525}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +32,8 @@ Global
 		{A41F68BC-3788-41BF-A76E-3A98660332DB} = {DAFD6700-34DB-4E19-8ECA-FB3B2D5EA0E1}
 		{12251753-F1F1-4E46-9E6E-88E22877D4DE} = {DAFD6700-34DB-4E19-8ECA-FB3B2D5EA0E1}
 		{F61279A3-FE9D-448B-BA6F-74508C102820} = {812E3414-A5B0-4900-98BF-F792433061FE}
+		{007256BA-7389-45E8-AFAD-59F09C48F8B8} = {DAFD6700-34DB-4E19-8ECA-FB3B2D5EA0E1}
+		{BB6F83BB-0116-49F7-A800-7CF01AC4E525} = {DAFD6700-34DB-4E19-8ECA-FB3B2D5EA0E1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DD26FDB4-66D5-499B-B310-0141FB978338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -45,5 +52,13 @@ Global
 		{F61279A3-FE9D-448B-BA6F-74508C102820}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F61279A3-FE9D-448B-BA6F-74508C102820}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F61279A3-FE9D-448B-BA6F-74508C102820}.Release|Any CPU.Build.0 = Release|Any CPU
+		{007256BA-7389-45E8-AFAD-59F09C48F8B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{007256BA-7389-45E8-AFAD-59F09C48F8B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{007256BA-7389-45E8-AFAD-59F09C48F8B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{007256BA-7389-45E8-AFAD-59F09C48F8B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6F83BB-0116-49F7-A800-7CF01AC4E525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6F83BB-0116-49F7-A800-7CF01AC4E525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6F83BB-0116-49F7-A800-7CF01AC4E525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6F83BB-0116-49F7-A800-7CF01AC4E525}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
