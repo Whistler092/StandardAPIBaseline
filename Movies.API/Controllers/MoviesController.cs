@@ -23,7 +23,7 @@ public class MoviesController : ControllerBase
         _outputCacheStore = outputCacheStore;
     }
 
-    [Authorize(AuthConstants.TruestedMemberPolicyName)]
+   /*  [Authorize(AuthConstants.TruestedMemberPolicyName)]
     //[ServiceFilter(typeof(ApiKeyAuthFilter))] Only for token based auth
     [HttpPost(ApiEndpoints.Movies.Create)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status201Created)]
@@ -36,11 +36,11 @@ public class MoviesController : ControllerBase
 
         await _outputCacheStore.EvictByTagAsync("movies", cancellationToken);
 
-        return CreatedAtAction(nameof(GetByIdV1), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
-        //return Created($"/{ApiEndpoints.Movies.Create}/{movie.Id}", movie.MapToToResponse());
-    }
+        //return CreatedAtAction(nameof(GetByIdV1), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
+        return Created($"/{ApiEndpoints.Movies.Create}/{movie.Id}", movie.MapToToResponse());
+    } */
 
-    [HttpGet(ApiEndpoints.Movies.Get)]
+   /*  [HttpGet(ApiEndpoints.Movies.Get)]
     [OutputCache(PolicyName = "MovieCache")]
     //[ResponseCache(Duration = 30, VaryByHeader = "Accept, Accept-Encoding", Location = ResponseCacheLocation.Any)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
@@ -84,9 +84,9 @@ public class MoviesController : ControllerBase
         });
 
         return Ok(response);
-    }
+    } */
      
-    [HttpGet(ApiEndpoints.Movies.GetAll)]
+  /*   [HttpGet(ApiEndpoints.Movies.GetAll)]
     [OutputCache(PolicyName = "MovieCache")]
     //[ResponseCache(Duration = 30, VaryByQueryKeys = new [] { "title", "year", "sortBy", "page", "PageSize" }, VaryByHeader = "Accept, Accept-Encoding", Location = ResponseCacheLocation.Any)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
@@ -102,8 +102,8 @@ public class MoviesController : ControllerBase
         var moviesResponse = movies.ToMoviesResponse(request.Page, request.PageSize, movieCount);
         return Ok(moviesResponse);
     }
-
-    [Authorize(AuthConstants.TruestedMemberPolicyName)]
+ */
+    /* [Authorize(AuthConstants.TruestedMemberPolicyName)]
     [HttpPut(ApiEndpoints.Movies.Update)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -121,7 +121,7 @@ public class MoviesController : ControllerBase
         await _outputCacheStore.EvictByTagAsync("movies", cancellationToken);
         var response = updated.MapToToResponse();
         return Ok(response);
-    }
+    } */
 
     [Authorize(AuthConstants.AdminUserPolicyName)]
     [HttpDelete(ApiEndpoints.Movies.Delete)]
