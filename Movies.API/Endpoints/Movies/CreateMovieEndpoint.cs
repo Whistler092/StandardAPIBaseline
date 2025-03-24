@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.OutputCaching;
 using Movies.API.Mapping;
 using Movies.Application.Services;
 using Movies.Contracts.Request;
+using Movies.Contracts.Responses;
 
 namespace Movies.API.Endpoints.Movies;
 
@@ -12,7 +13,7 @@ public static class CreateMovieEndpoint
 
     public static IEndpointRouteBuilder MapCreateMovie(this IEndpointRouteBuilder app)
     {
-        app.MapPost(ApiEndpoints.Movies.Create, async(
+        app.MapPost(ApiEndpoints.Movies.Create,  async(
             CreateMovieRequest request,
             IMovieService movieService,
             IOutputCacheStore _outputCacheStore,
@@ -28,7 +29,10 @@ public static class CreateMovieEndpoint
             return TypedResults.CreatedAtRoute(response, GetMovieEndpoint.Name, new { idOrSlug = movie.Slug });
             //return CreatedAtAction(nameof(GetByIdV1), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
         })
-            .WithName(Name);
+            .WithName(Name)
+            .Produces<MovieResponse>(StatusCodes.Status201Created)
+            .Produces<ValidationFailureResponse>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(AuthConstants.TruestedMemberPolicyName);
 
         return app;
     }

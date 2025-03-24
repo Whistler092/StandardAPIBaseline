@@ -65,7 +65,9 @@ builder.Services.AddApiVersioning(x =>
     //returns at headers the API supported versions
     x.ReportApiVersions = true;
     x.ApiVersionReader = new MediaTypeApiVersionReader("api-version");
-}).AddMvc().AddApiExplorer();
+}).AddApiExplorer();
+
+builder.Services.AddEndpointsApiExplorer();
 
 //builder.Services.AddResponseCaching();
 builder.Services.AddOutputCache(x =>

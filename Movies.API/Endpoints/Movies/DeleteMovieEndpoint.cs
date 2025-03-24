@@ -25,7 +25,10 @@ public static class DeleteMovieEndpoint
             return Results.Ok();
             //return CreatedAtAction(nameof(GetByIdV1), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
         })
-            .WithName(Name);
+            .WithName(Name)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization(AuthConstants.AdminUserPolicyName);
 
         return app;
     }

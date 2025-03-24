@@ -55,7 +55,9 @@ public static class GetMovieEndpoint
  */
                 return TypedResults.Ok(response);
 
-            }).WithName(Name);
+            }).WithName(Name)
+            .Produces<MovieResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
         return app;
     }
 

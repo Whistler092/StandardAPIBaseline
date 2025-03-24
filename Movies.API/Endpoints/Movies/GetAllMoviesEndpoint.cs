@@ -30,7 +30,8 @@ public static class GetAllMoviesEndpoint
 
                 return TypedResults.Ok(moviesResponse);
 
-            }).WithName(Name);
+            }).WithName(Name)
+            .Produces<MovieResponse>(StatusCodes.Status200OK);
         return app;
     }
 

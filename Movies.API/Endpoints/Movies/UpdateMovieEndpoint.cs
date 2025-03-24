@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.OutputCaching;
 using Movies.API.Mapping;
 using Movies.Application.Services;
 using Movies.Contracts.Request;
+using Movies.Contracts.Responses;
 
 namespace Movies.API.Endpoints.Movies;
 
@@ -33,7 +34,11 @@ public static class UpdateMovieEndpoint
             return TypedResults.CreatedAtRoute(response, GetMovieEndpoint.Name, new { idOrSlug = movie.Slug });
             //return CreatedAtAction(nameof(GetByIdV1), new { idOrSlug = movie.Slug }, movie.MapToToResponse());
         })
-            .WithName(Name);
+            .WithName(Name)
+            .Produces<MovieResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces<ValidationFailureResponse>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(AuthConstants.TruestedMemberPolicyName);
 
         return app;
     }
